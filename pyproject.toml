@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netlogger"
+version = "0.1.0"
+description = "Monitor de conexiones de red en tiempo real"
+requires-python = ">=3.10"
+dependencies = [
+    "psutil",
+    "textual",
+]
+
+[project.scripts]
+netlogger = "netlogger.cli:main"
+
+[tool.setuptools]
+packages = ["netlogger", "netlogger.connections"]

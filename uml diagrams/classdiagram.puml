@@ -1,0 +1,51 @@
+@startuml
+class ConnectionRaw {
+  + local_ip: str
+  + local_port: int
+  + remote_ip: str
+  + remote_port: int
+  + protocol: str
+  + status: str
+  + pid: int
+  ' dumb data: only what psutil gives, no methods
+}
+
+class ConnectionInfo {
+  + remote_ip: str
+  + remote_port: int
+  + status: str
+  ' --- filled in by the parser ---
+  + process: str
+  + service: str
+  + domain: str
+}
+
+class ConnectionParser {
+  - dns_cache: dict<str, str>
+  + interpret(raw: ConnectionRaw): ConnectionInfo
+  - reverse_dns(ip: str): str
+  - process_name(pid: int): str
+  - service_for_port(port: int): str
+}
+
+class ConnectionTable {
+  - parser: ConnectionParser
+  - connections: dict<tuple, ConnectionInfo>
+  + refresh(): void
+  + all(): list<ConnectionInfo>
+  + new(): list<ConnectionInfo>
+  + closed(): list<ConnectionInfo>
+}
+
+class CLI {
+  - table: ConnectionTable
+  + run(): void
+  - render(): void
+}
+
+ConnectionParser ..> ConnectionRaw : receives
+ConnectionParser ..> ConnectionInfo : creates
+ConnectionTable o--> ConnectionParser : uses
+ConnectionTable *-- "many" ConnectionInfo : stores
+CLI o--> ConnectionTable : uses
+@enduml
